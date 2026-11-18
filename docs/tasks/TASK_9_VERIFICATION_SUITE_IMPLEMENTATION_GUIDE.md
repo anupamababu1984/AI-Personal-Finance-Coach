@@ -93,6 +93,17 @@ class PersonaMockLLMClient:
     """Mock LLM returning distinct, tailored plans depending on persona age."""
 
     async def generate_json(self, system_prompt: str, user_prompt: str):
+        # If this is a call from HHHEvaluatorAgent, return passing scorecard
+        if "evaluation critic" in system_prompt or "PROPOSED PLAN ACTIONS" in user_prompt:
+            return {
+                "helpful_score": 4,
+                "honest_score": 4,
+                "harmless_score": 4,
+                "passed": True,
+                "critical_issue": False,
+                "critique": None,
+            }
+
         if "Age: 28" in user_prompt:
             # Persona 1: Aggressive wealth compounding + student debt
             return {
